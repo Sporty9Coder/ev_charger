@@ -10,6 +10,7 @@ import UserDash from './components/UserDash'
 import ListStations from './components/ListStations'
 import BookSlot from './components/BookSlot'
 import HomeCharging from './components/HomeCharging'
+import Biddings from './components/Biddings'
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
         <Route path='/list-stations' element={<ListStations/>}></Route>
         <Route path='/book-slot' element={<BookSlot/>}></Route>
         <Route path='/home-charging' element={<HomeCharging/>}></Route>
+        <Route path='/biddings' element={<Biddings/>}></Route>
       </Routes>
     </>
   )

@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const {AddStation, FetchAllStation, setChargePointsData,fetchPointsData, PendingBookings, ApproveRequest, AllBookings} = require("../controller/Station/index")
+const {AddStation, FetchAllStation, setChargePointsData,fetchPointsData, PendingBookings, ApproveRequest, AllBookings, HomeBookings} = require("../controller/Station/index")
 const {requireAuth} = require("../middleware/jwtAuth");
 
 app.use(requireAuth);
@@ -12,5 +12,6 @@ app.get('/fetch-points-data', fetchPointsData)
 app.get('/pending-bookings', PendingBookings)
 app.post('/approve-request', ApproveRequest)
 app.get('/all-bookings', AllBookings)
+app.get('/home-bookings', HomeBookings);
 
 module.exports = app;

@@ -99,4 +99,15 @@ const AllBookings = async (req, res) => {
     }
 };
 
-module.exports = {AddStation, FetchAllStation, setChargePointsData, fetchPointsData, PendingBookings, ApproveRequest, AllBookings};
+async function HomeBookings(req, resp) 
+{
+    try {
+        const homebookings = await BookingsModel.find({status: 'bid'});
+        resp.json({status: true, ary: homebookings});
+    } catch (error) {
+        console.log(error);
+        resp.json({status: false, msg: error});
+    }    
+}
+
+module.exports = {AddStation, FetchAllStation, setChargePointsData, fetchPointsData, PendingBookings, ApproveRequest, AllBookings, HomeBookings};
