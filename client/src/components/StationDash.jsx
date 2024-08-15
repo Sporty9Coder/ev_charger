@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { publicAxios } from '../services/axios.config';
+import { privateAxios } from '../services/axios.config';
 import { useLocation } from 'react-router-dom';
 import { PieCharts } from './PieCharts';
 import io from 'socket.io-client';
@@ -13,8 +13,8 @@ export default function StationDash() {
     const fetchStationsAndBookings = async () => {
         try {
             // Fetch all stations
-            const stationsRes = await publicAxios.get('/stations/fetch-stations'); // Adjust API endpoint as needed
-            const bookingsRes = await publicAxios.get('/stations/all-bookings'); // Adjust API endpoint as needed
+            const stationsRes = await privateAxios.get('/stations/fetch-stations'); // Adjust API endpoint as needed
+            const bookingsRes = await privateAxios.get('/stations/all-bookings'); // Adjust API endpoint as needed
 
             const allStations = stationsRes.data.stationAry;
             const pendingBookings = bookingsRes.data.filter(booking => booking.status === 'pending');
@@ -140,7 +140,7 @@ export default function StationDash() {
                                       <td className="py-2 px-4 border-b  text-center">
                                           {booking.battery_capacity}
                                       </td>
-                                      <td className="py-2 px-4 border-b text-center">{booking.totalUnits}</td>
+                                      <td className="py-2 px-4 border-b text-center">{booking.totalUnits.toFixed(2)}</td>
                                   </tr>
                               ))}
                           </tbody>

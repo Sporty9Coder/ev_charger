@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import AddStationModal from './AddStationModal';
 import { func } from 'prop-types';
 import ChargingPoints from './ChargingPoints';
-import { publicAxios } from '../services/axios.config';
+import { privateAxios } from '../services/axios.config';
 import { useNavigate } from 'react-router-dom';
 
 function ManageStation() {
@@ -20,7 +20,7 @@ function ManageStation() {
         const fetchStations = async () => {
             try {
                 console.log("Fetching stations...");
-                const response = await publicAxios.get("/stations/fetch-stations");
+                const response = await privateAxios.get("/stations/fetch-stations");
                 console.log(response.data.stationAry);
                 if (response.data.status === true) {
                     console.log("Stations fetched successfully");

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { json, useLocation } from 'react-router-dom';
-import { publicAxios } from '../services/axios.config';
+import { privateAxios } from '../services/axios.config';
 import { UserIDContext } from '../context/Context.jsx';
 import io from 'socket.io-client';
 
@@ -30,7 +30,7 @@ export default function BookSlot() {
             }
             else {
                 try {
-                    const resp = await publicAxios.get('drivers/charge-points-data?id='+station._id);
+                    const resp = await privateAxios.get('drivers/charge-points-data?id='+station._id);
                     if(resp.data.status)
                         setCharge_points(resp.data.ary);
                 } catch (error) {
@@ -53,7 +53,7 @@ export default function BookSlot() {
             // alert("Units= "+booking.totalUnits);
             const totalPrice = parseInt(charge_points[index].price)*booking.totalUnits;
             // alert("Price= "+totalPrice)
-            const response = await publicAxios.post("/drivers/book-slot", { stationid: station._id, slotno: index, booking: {...booking, userid: userid, price: totalPrice, status: "accepted" } });
+            const response = await privateAxios.post("/drivers/book-slot", { stationid: station._id, slotno: index, booking: {...booking, userid: userid, price: totalPrice, status: "accepted" } });
             if (response.data.status) {
                 setCharge_points(response.data.ary)
                 // alert(JSON.stringify(response.data.booking));
@@ -71,7 +71,7 @@ export default function BookSlot() {
     const generateRequest = async () => {
         try {
             // Make an API call to generate the request
-            const response = await publicAxios.post("/drivers/generate-request", { stationid: station._id, booking: {...booking, userid: userid, price: 0 , status: "pending" } });
+            const response = await privateAxios.post("/drivers/generate-request", { stationid: station._id, booking: {...booking, userid: userid, price: 0 , status: "pending" } });
             if (response.data.status) {
                 // alert(JSON.stringify(response.data.booking))
                 alert("Request generated successfully. You will be notified when a slot is free.");

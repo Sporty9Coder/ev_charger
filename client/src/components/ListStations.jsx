@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import AddStationModal from './AddStationModal';
 import { func } from 'prop-types';
 import ChargingPoints from './ChargingPoints';
-import { publicAxios } from '../services/axios.config';
+import { privateAxios } from '../services/axios.config';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 
@@ -24,7 +24,7 @@ export default function ListStations() {
         const fetchStations = async () => {
             try {
                 console.log("Fetching stations...");
-                const response = await publicAxios.get("/drivers/public-stations?station_type="+station_type);
+                const response = await privateAxios.get("/drivers/public-stations?station_type="+station_type);
                 console.log(response.data.stationAry);
                 if (response.data.status === true) {
                     console.log(station_type+" Stations fetched successfully");

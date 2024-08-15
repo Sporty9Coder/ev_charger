@@ -18,6 +18,7 @@ function Login() {
         const response = await publicAxios.post('/users/login', obj);
         // alert(JSON.stringify(response));     
         // alert(response.data.user.usertype);
+        localStorage.setItem("access_token", response.data.token);
         if(response.data.user.usertype === 'station_owner')
         {
             navigate('/station-dash')

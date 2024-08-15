@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 const {AddStation, FetchAllStation, setChargePointsData,fetchPointsData, PendingBookings, ApproveRequest, AllBookings} = require("../controller/Station/index")
+const {requireAuth} = require("../middleware/jwtAuth");
+
+app.use(requireAuth);
 
 app.post("/add-station", AddStation);
 app.get("/fetch-stations", FetchAllStation);

@@ -1,6 +1,6 @@
 import { func } from 'prop-types';
 import React, { useState } from 'react'
-import { publicAxios } from '../services/axios.config';
+import { privateAxios } from '../services/axios.config';
 
 
 function AddStationModal({ onClose, isOpen, addStation }) {
@@ -22,7 +22,7 @@ function AddStationModal({ onClose, isOpen, addStation }) {
     {
         event.preventDefault();
         // alert(JSON.stringify(stationObj));
-        const response = await publicAxios.post("/stations/add-station", stationObj);
+        const response = await privateAxios.post("/stations/add-station", stationObj);
         if(response.data.status === true)
         {
             // alert("hello")

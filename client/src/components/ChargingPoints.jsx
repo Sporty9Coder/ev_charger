@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { json, useLocation } from 'react-router-dom';
-import { publicAxios } from '../services/axios.config';
+import { privateAxios } from '../services/axios.config';
 import io from 'socket.io-client';
 
 function ChargingPoints() {
@@ -18,7 +18,7 @@ function ChargingPoints() {
 
     const fetchPendingBookings = async () => {
         try {
-            const response = await publicAxios.get('/stations/pending-bookings?stationid=' + station._id);
+            const response = await privateAxios.get('/stations/pending-bookings?stationid=' + station._id);
             if (response.data.status)
                 setPendingBookings(response.data.ary);
         } catch (error) {
@@ -41,7 +41,7 @@ function ChargingPoints() {
             }
             else {
                 try {
-                    const resp = await publicAxios.get('stations/fetch-points-data?id=' + station._id);
+                    const resp = await privateAxios.get('stations/fetch-points-data?id=' + station._id);
                     if (resp.data.status)
                         setCharge_points(resp.data.ary);
                 } catch (error) {
@@ -61,7 +61,7 @@ function ChargingPoints() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await publicAxios.post("/stations/charge-points-data", { ary: charge_points, stationid: station._id });
+            const response = await privateAxios.post("/stations/charge-points-data", { ary: charge_points, stationid: station._id });
             if (response.data.status) {
                 // alert(JSON.stringify(response.data.obj));
                 setCharge_points(response.data.obj.chargePointsAry)
@@ -78,7 +78,7 @@ function ChargingPoints() {
     async function ApproveRequest(booking)
     {
         try {
-            const response = publicAxios.post("/stations/approve-request", booking);
+            const response = privateAxios.post("/stations/approve-request", booking);
             fetchPendingBookings();
         } catch (error) {
             console.log(error);
@@ -178,7 +178,7 @@ function ChargingPoints() {
                                             {booking.battery_capacity}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {booking.totalUnits}
+                                            {booking.totalUnits.toFixed(2)}
                                         </td>
                                         <td class="px-6 py-4">
                                             <a href="" class="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={()=>{ApproveRequest(booking)}}>Approve</a>

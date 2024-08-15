@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
-import { publicAxios } from '@/services/axios.config';
+import { privateAxios } from '@/services/axios.config';
 
 export default function HomeCharging() {
     const location = useLocation();
@@ -39,13 +39,23 @@ export default function HomeCharging() {
     }
 
     async function placeBid() {
-        alert("start")
+        // alert("start")
         // Implement your bid placement logic here
         try {
-            alert('in try block')
-            const response = await publicAxios.post("/drivers/home-charging", { homebooking: {...vehicleDetails, userid: userid, status: "bid" } });
+            // alert('in try block')
+            const response = await privateAxios.post("/drivers/home-charging", { homebooking: {...vehicleDetails, userid: userid, status: "bid" } });
             if (response.data.status) {
-                alert(JSON.stringify(response.data.booking));
+                // alert(JSON.stringify(response.data.booking));
+                alert('Bid placed successfully!');
+                setVehicleDetails({
+                    model: '',
+                    type: '',
+                    company: '',
+                    battery_capacity: 0,
+                    totalUnits: 0
+                });
+                setNotify(false);
+                setShowBidButton(false);
             }
             else {
                 alert(response.data.msg)
@@ -54,20 +64,7 @@ export default function HomeCharging() {
         } catch (error) {
              
             console.log(error);
-        }
-
-        // Simulate successful bid placement
-            alert('Bid placed successfully!');
-            // Reset the form for a new bid
-            setVehicleDetails({
-                model: '',
-                type: '',
-                company: '',
-                battery_capacity: 0,
-                totalUnits: 0
-            });
-            setNotify(false);
-            setShowBidButton(false);
+        }      
     }
 
     return (
