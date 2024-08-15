@@ -1,7 +1,7 @@
 import React from 'react'
-import Link from 'react-router-dom'
+// import Link from 'react-router-dom'
 import ServicesCard from './ServicesCard';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import ContactUs from './ContactUs';
 import AboutUs from './AboutUs';
@@ -9,13 +9,13 @@ import AboutUs from './AboutUs';
 
 
 function Homepage() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  /*const handleClick = (event) => {
-    // alert("hello")
-    // alert(event.target.name);
+  const handleClick = (event) => {
+    alert("hello")
+    alert(event.target.name);
     navigate("/"+event.target.name);
-  }*/
+  }
 
   return (
 
@@ -27,11 +27,11 @@ function Homepage() {
             <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
           </a>
           <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse ">
-            <Button asChild className='mr-2'>
-              <a href="/login">Login</a>
+            <Button onClick={handleClick} name='login' className='mr-2'>
+              Login
             </Button>
-            <Button asChild>
-              <a href="/signup">Get Started</a>
+            <Button onClick={handleClick} name='signup'>
+              Get Started
             </Button>
             <button data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-cta" aria-expanded="false">
               <span class="sr-only">Open main menu</span>
