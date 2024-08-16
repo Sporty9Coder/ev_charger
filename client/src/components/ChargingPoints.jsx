@@ -80,10 +80,10 @@ function ChargingPoints() {
         try {
             const response = privateAxios.post("/stations/approve-request", booking);
             fetchPendingBookings();
+            socket.emit('requestUpdated');
         } catch (error) {
             console.log(error);
         }
-        socket.emit('requestUpdated');
     }
 
     return (

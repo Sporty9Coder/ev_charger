@@ -8,9 +8,9 @@ const AuthRouter = require("./routes/AuthRouter");
 const StationRouter = require("./routes/StationRouter");
 const DriverRouter = require("./routes/DriverRouter");
 const bodyparser = require("body-parser");
-const socketIo = require('socket.io');
 const server = http.createServer(app);
-const io = socketIo(server);
+const { Server } = require("socket.io");
+const io = new Server(server);
 
 app.use(cors());
 
@@ -23,6 +23,7 @@ io.on('connection', (socket) => {
 
   // Handle request generation or approval
   socket.on('requestUpdated', () => {
+    console.log("requesting update");
       // Notify all connected clients about the update
       io.emit('updateStationDash');
   });

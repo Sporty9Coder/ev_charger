@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
 import { privateAxios } from '@/services/axios.config';
+import { useSelector } from 'react-redux'
 
 export default function HomeCharging() {
     const location = useLocation();
@@ -17,11 +18,24 @@ export default function HomeCharging() {
 
     const [notify, setNotify] = useState(false);
     const [showBidButton, setShowBidButton] = useState(false);
+    const bidsList = useSelector((state) => {
+        try {
+            console.log(state);
+            return state.bidList.bids; 
+        } catch (error) {
+            console.log(error);
+        }});
+
+        useEffect(()=>{
+            console.log(bidsList);
+        },[bidsList])
 
     useEffect(() => {
         if (booking) {
             setVehicleDetails(booking);
         }
+        console.log(bidsList);
+        alert(JSON.stringify(bidsList))
     }, [booking]);
 
     function handleChange(event) {
@@ -148,6 +162,20 @@ export default function HomeCharging() {
                         <Button onClick={placeBid}>Place Bid</Button>
                     </div>
                 )}
+                <div>
+                    {
+                        bidsList.map((bid) => {
+                            return (
+                                <div>
+                                    <div>{bid.speed}</div>
+                                    <div>{bid.price}</div>
+                                    <div>{bid.station_name}</div>
+                                    <div>{bid.location}</div>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
         </div>
     );
 }

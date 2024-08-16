@@ -5,7 +5,7 @@ import { PieCharts } from './PieCharts';
 import io from 'socket.io-client';
 
 export default function StationDash() {
-    const socket = io('http://localhost:6066');
+    const socket = io('http://127.0.0.1:6066');
 
     const [stations, setStations] = useState([]);
     const [bookings, setBookings] = useState([]);
@@ -15,9 +15,11 @@ export default function StationDash() {
             // Fetch all stations
             const stationsRes = await privateAxios.get('/stations/fetch-stations'); // Adjust API endpoint as needed
             const bookingsRes = await privateAxios.get('/stations/all-bookings'); // Adjust API endpoint as needed
+            console.log(stationsRes);
+            console.log(bookingsRes);
 
             const allStations = stationsRes.data.stationAry;
-            const pendingBookings = bookingsRes.data.filter(booking => booking.status === 'pending');
+            const pendingBookings = bookingsRes.data;
 
             setStations(allStations);
             setBookings(pendingBookings);
@@ -31,6 +33,8 @@ export default function StationDash() {
         fetchStationsAndBookings();
 
         socket.on('updateStationDash', () => {
+            alert("event established")
+            console.log("Received updateStationDash event");
             fetchStationsAndBookings();
         });
 

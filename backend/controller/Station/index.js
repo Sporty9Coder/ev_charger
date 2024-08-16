@@ -89,9 +89,9 @@ async function ApproveRequest(req,resp)
     }
 }
 
-const AllBookings = async (req, res) => {
+const AllPendingBookings = async (req, res) => {
     try {
-        const bookings = await BookingsModel.find({});
+        const bookings = await BookingsModel.find({status: 'pending'});
         console.log(bookings);
         res.status(200).json(bookings);
     } catch (error) {
@@ -110,4 +110,4 @@ async function HomeBookings(req, resp)
     }    
 }
 
-module.exports = {AddStation, FetchAllStation, setChargePointsData, fetchPointsData, PendingBookings, ApproveRequest, AllBookings, HomeBookings};
+module.exports = {AddStation, FetchAllStation, setChargePointsData, fetchPointsData, PendingBookings, ApproveRequest, AllPendingBookings, HomeBookings};
