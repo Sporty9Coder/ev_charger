@@ -8,9 +8,14 @@ const AuthRouter = require("./routes/AuthRouter");
 const StationRouter = require("./routes/StationRouter");
 const DriverRouter = require("./routes/DriverRouter");
 const bodyparser = require("body-parser");
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
+const { createServer } = require("node:http")
+const server = createServer(app);
+const socket_io = require("socket.io");
+const io = socket_io(server, {
+  cors:{
+    origin: 'http://localhost:5173'
+  }
+})
 
 app.use(cors());
 
@@ -21,7 +26,10 @@ app.use(bodyparser.json());
 io.on('connection', (socket) => {
   console.log('New client connected');
 
-  // Handle request generation or approval
+  socket.on('hello',()=>{
+    console.log('hello connection check')
+  })
+
   socket.on('requestUpdated', () => {
     console.log("requesting update");
       // Notify all connected clients about the update

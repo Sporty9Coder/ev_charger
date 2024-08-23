@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { json, useLocation } from 'react-router-dom';
 import { privateAxios } from '../services/axios.config';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
+import { socket } from '@/socket';
 
 function ChargingPoints() {
-    const socket = io("http://localhost:6066");
+    // const socket = io("http://localhost:6066");
     // alert(station.charging_points);
     const location = useLocation();
     const { selectedStation: station } = location.state || {};
@@ -26,9 +27,17 @@ function ChargingPoints() {
         }
     }
 
+    socket.on('connect', ()=>{
+        console.log('connected to socket io in ChargingPoints');
+    })
+    
+
     useEffect(() => {
         fetchPendingBookings();
+        socket.emit('hello');
     }, [])
+
+
 
     useEffect(() => {
         const initializeChargePoints = async () => {

@@ -11,6 +11,7 @@ import ListStations from './components/ListStations'
 import BookSlot from './components/BookSlot'
 import HomeCharging from './components/HomeCharging'
 import Biddings from './components/Biddings'
+import FindStation from './components/FindStation'
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
         <Route path='/book-slot' element={<BookSlot/>}></Route>
         <Route path='/home-charging' element={<HomeCharging/>}></Route>
         <Route path='/biddings' element={<Biddings/>}></Route>
+        <Route path='/find-station' element={<FindStation/>}></Route>
       </Routes>
     </>
   )

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { privateAxios } from '../services/axios.config';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { PieCharts } from './PieCharts';
-import io from 'socket.io-client';
+import { socket } from "../socket";
 
 export default function StationDash() {
-    const socket = io('http://127.0.0.1:6066');
+    // const socket = io('http://127.0.0.1:6066');
 
     const [stations, setStations] = useState([]);
     const [bookings, setBookings] = useState([]);
@@ -15,8 +15,8 @@ export default function StationDash() {
             // Fetch all stations
             const stationsRes = await privateAxios.get('/stations/fetch-stations'); // Adjust API endpoint as needed
             const bookingsRes = await privateAxios.get('/stations/all-bookings'); // Adjust API endpoint as needed
-            console.log(stationsRes);
-            console.log(bookingsRes);
+            // console.log(stationsRes);
+            // console.log(bookingsRes);
 
             const allStations = stationsRes.data.stationAry;
             const pendingBookings = bookingsRes.data;
@@ -28,26 +28,41 @@ export default function StationDash() {
         }
     };
 
+    socket.on('connect', ()=>{
+        console.log("connected to socket io in stationdash");
+    });
+
+    socket.on('disconnect',()=>{
+        console.log('disconnected to socket io in stationdash');
+    })
+
+    socket.on('updateStationDash',async()=>{
+        console.log('receving update for re-fetching');
+        await fetchStationsAndBookings();
+    })
+
     useEffect(() => {
         // Initial Fetch
         fetchStationsAndBookings();
 
-        socket.on('updateStationDash', () => {
-            alert("event established")
-            console.log("Received updateStationDash event");
-            fetchStationsAndBookings();
-        });
+        // socket.on('updateStationDash', () => {
+        //     // alert("event established")
+        //     console.log("Received updateStationDash event");
+        //     fetchStationsAndBookings();
+        // });
 
-        // Clean up the event listener on component unmount
-        return () => {
-            socket.off('updateStationDash');
-        };
+        // // Clean up the event listener on component unmount
+        // return () => {
+        //     socket.off('updateStationDash');
+        // };
     }, []);
 
     const getStationNameAndLocation = (stationId) => {
         const station = stations.find(station => station._id === stationId);
         return station ? `${station.station_name} - ${station.location}` : 'Station not found';
     };
+    
+    const navigate = useNavigate();
     
     return (
         <div>
@@ -60,7 +75,7 @@ export default function StationDash() {
                     <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                         <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
                             <span class="sr-only">Open user menu</span>
-                            <img class="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user photo" />
+                            <img class="w-8 h-8 rounded-full" src="https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small/user-profile-icon-free-vector.jpg" alt="user photo" />
                         </button>
                         {/* Dropdown menu  */}
                         <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
@@ -79,7 +94,10 @@ export default function StationDash() {
                                     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Earnings</a>
                                 </li>
                                 <li>
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+                                    <a href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white" onClick={()=>{
+                                        localStorage.removeItem('access_token')
+                                        navigate("/")
+                                    }}>Sign out</a>
                                 </li>
                             </ul>
                         </div>

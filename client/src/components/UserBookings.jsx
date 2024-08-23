@@ -5,6 +5,7 @@ import { BookingContext, UserIDContext } from '../context/Context.jsx';
 export default function UserBookings() {
     const location = useLocation();
     const { userid } = location.state || {};
+    const navigate = useNavigate();
 
     const [vehicleDetails, setVehicleDetails] = useState({
         model: "",
@@ -38,6 +39,7 @@ export default function UserBookings() {
 
     return (
         <>
+
             <div class="mx-auto mt-5 border-2 bg-white shadow-lg rounded-lg p-6 w-96">
                 <h2 class="text-2xl font-semibold mb-4">Enter Vehicle Details</h2>
                 <form>

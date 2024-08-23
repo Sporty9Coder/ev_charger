@@ -1,6 +1,7 @@
 const { get } = require("mongoose");
-const {StationModel} = require("../../models/StationModel");
-const {BookingsModel} = require("../../models/BookingsModel");
+const { StationModel } = require("../../models/StationModel");
+const { BookingsModel } = require("../../models/BookingsModel");
+const { BidsModel } = require('../../models/BidsModel')
 
 async function publicStations(req,resp)
 {
@@ -118,4 +119,40 @@ async function HomeCharging(req, resp)
     }
 }
 
-module.exports = {publicStations, BookSlot, getPointsAry, BookInQueue, HomeCharging};
+async function AllBookings(req,resp)
+{
+    const id = req.query.userid;
+    console.log(id);
+    try {
+        const bookings = await BookingsModel.find({user_id : id});
+        console.log(bookings);
+        resp.json({status: true, ary: bookings});
+    } catch (error) {
+        console.log(error);
+        resp.json({status: false, msg: error});
+    }
+}
+
+async function AllLocations(req, resp) 
+{
+    try {
+        const locations = await StationModel.distinct('location');
+        resp.json({status: true, ary: locations})
+    } catch (error) {
+        console.log(error);
+        resp.json({status: false, msg: error})
+    }    
+}
+
+async function getBids(req, resp)
+{
+    try {
+        const bids = await BidsModel.find();
+        resp.json({status: true, bids: bids});
+    } catch (error) {
+        console.log(error);
+        resp.json({status: false, msg: error})
+    }
+}
+
+module.exports = {publicStations, BookSlot, getPointsAry, BookInQueue, HomeCharging, AllBookings, AllLocations, getBids};

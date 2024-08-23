@@ -1,5 +1,6 @@
-const {StationModel} = require("../../models/StationModel");
-const {BookingsModel} = require("../../models/BookingsModel")
+const { StationModel } = require("../../models/StationModel");
+const { BookingsModel } = require("../../models/BookingsModel")
+const { BidsModel } = require('../../models/BidsModel')
 
 async function AddStation(req,resp)
 {
@@ -17,9 +18,9 @@ async function AddStation(req,resp)
 async function FetchAllStation(req,resp)
 {
     try {
-        console.log("fetching alll stations");
+        // console.log("fetching alll stations");
         const stationsAry = await StationModel.find();
-        console.log(stationsAry);
+        // console.log(stationsAry);
         resp.json({status: true, stationAry: stationsAry});
     } catch (error) {
         console.log(error);
@@ -63,7 +64,7 @@ async function PendingBookings(req,resp)
         const bookingsAry = await BookingsModel.find({$and:[
             {status: 'pending'},{station_id: req.query.stationid}
             ]});
-            console.log(bookingsAry);
+            // console.log(bookingsAry);
             resp.json({status: true, ary: bookingsAry});
 
     } catch (error) {
@@ -92,7 +93,7 @@ async function ApproveRequest(req,resp)
 const AllPendingBookings = async (req, res) => {
     try {
         const bookings = await BookingsModel.find({status: 'pending'});
-        console.log(bookings);
+        // console.log(bookings);
         res.status(200).json(bookings);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching bookings', error });
@@ -110,4 +111,49 @@ async function HomeBookings(req, resp)
     }    
 }
 
-module.exports = {AddStation, FetchAllStation, setChargePointsData, fetchPointsData, PendingBookings, ApproveRequest, AllPendingBookings, HomeBookings};
+async function getStationFromCity(req, resp) 
+{
+    const {location} = req.query;
+    console.log(location);
+    try {
+        const stationsary = await StationModel.find({location: location});
+        console.log(stationsary);
+        resp.json({status: true, ary: stationsary});
+    } catch (error) {
+        console.log(error);
+        resp.json({status: false, msg: error});
+    }    
+}
+
+async function PlaceBid(req, resp) 
+{
+    const bid = req.body;
+    console.log(bid);
+    
+    try {
+        const lastDocument = await BidsModel.findOne().sort({ _id: -1 });
+        console.log('lastbid', lastDocument);
+        if(lastDocument)
+        {
+            if(bid.price < lastDocument.price)
+            {
+                const bidobj = new BidsModel(req.body);
+                const obj = await bidobj.save();
+                resp.json({status: true, obj: obj, task: 'better bid'});
+            }
+            else{
+                resp.json({status: true, task: 'bid not good'});
+            }
+        }
+        else {
+            const bidobj = new BidsModel(req.body);
+            const obj = await bidobj.save();
+            resp.json({status: true, obj: obj, task: 'first bid'});
+        }
+    } catch (error) {
+        console.log(error);
+        resp.json({status: false, msg: error})
+    }
+}
+
+module.exports = {AddStation, FetchAllStation, setChargePointsData, fetchPointsData, PendingBookings, ApproveRequest, AllPendingBookings, HomeBookings, getStationFromCity, PlaceBid};

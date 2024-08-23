@@ -1,10 +1,14 @@
-import React from 'react'
+import { privateAxios } from '@/services/axios.config';
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Button } from './ui/button';
 
 export default function UserDash() {
     const location = useLocation();
     const { userid } = location.state || {};
     const navigate = useNavigate();
+    const [bookings, setBookings] = useState([]);
+    const [showAll, setShowAll] = useState(false);
 
     function handleClick()
     {
@@ -12,8 +16,25 @@ export default function UserDash() {
         navigate('/user-bookings', {state: {userid}});
     }
 
+    useEffect(()=>{
+        const getBookings = async () => {
+            try {
+                const response = await privateAxios.get("/drivers/all-bookings?userid="+userid);
+                console.log(response.data);
+                if(response.data.status)
+                setBookings(response.data.ary);
+                else alert(response.data.msg);
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        getBookings();
+    },[])
+
   return (
-    <div>
+    <div className='flex flex-col'>
             <nav class="bg-white border-gray-200 dark:bg-gray-900">
                 <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                     <a href="https://flowbite.com/" class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -23,7 +44,7 @@ export default function UserDash() {
                     <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                         <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
                             <span class="sr-only">Open user menu</span>
-                            <img class="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user photo" />
+                            <img class="w-8 h-8 rounded-full" src="https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small/user-profile-icon-free-vector.jpg" alt="user photo" />
                         </button>
                         {/* Dropdown menu  */}
                         <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
@@ -42,7 +63,10 @@ export default function UserDash() {
                                     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Earnings</a>
                                 </li>
                                 <li>
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+                                    <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white" onClick={()=>{
+                                        localStorage.removeItem('access_token');
+                                        navigate('/')
+                                    }}>Sign out</a>
                                 </li>
                             </ul>
                         </div>
@@ -59,7 +83,7 @@ export default function UserDash() {
                                 <a href="#" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Home</a>
                             </li>
                             <li>
-                                <a href="/manage-station" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Find Stations</a>
+                                <a href="/find-station" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Find Stations</a>
                             </li>
                             <li>
                                 <a href="" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700" onClick={handleClick}>User Bookings</a>
@@ -74,6 +98,56 @@ export default function UserDash() {
                     </div>
                 </div>
             </nav>
+<div className='container flex flex-col gap-5 mt-5'>
+<div className='text-2xl font-semibold font-mono dark:text-white'>
+    Previous Bookings
+</div>
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                    Model 
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Type
+                </th>
+                <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                    Company
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Price
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {
+                bookings.map((booking, index) => {
+                    if(booking.status === 'accepted')
+                    return (
+                        (index < 3 || showAll) && <tr class="border-b border-gray-200 dark:border-gray-700">
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
+                    {booking.model}
+                </th>
+                <td class="px-6 py-4">
+                    {booking.type}
+                </td>
+                <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800">
+                    {booking.company}
+                </td>
+                <td class="px-6 py-4">
+                    {booking.price.toFixed(2)}
+                </td>
+            </tr>
+                    )
+                })
+            }
+        </tbody>
+    </table>
+    <Button variant="link" className='float-right' onClick={()=>{setShowAll(!showAll)}}>{!showAll? 'Show All' : 'Show Less'}</Button>
+</div>
+</div>  
+
         </div>
   )
 }

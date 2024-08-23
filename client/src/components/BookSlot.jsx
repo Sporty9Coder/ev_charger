@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from 'react'
 import { json, useLocation } from 'react-router-dom';
 import { privateAxios } from '../services/axios.config';
 import { UserIDContext } from '../context/Context.jsx';
-import io from 'socket.io-client';
+// import openSocket from 'socket.io-client';
+import { socket } from '@/socket';
 
 export default function BookSlot() {
-    const socket = io('http://localhost:6066');
 
     const location = useLocation();
     const { selectedStation: station, booking, userid } = location.state || {};
@@ -68,6 +68,11 @@ export default function BookSlot() {
         }
     }
 
+    socket.on('connect', ()=>{
+        console.log('connected to socket io in bookslot');
+        console.log(socket.id);
+    })
+
     const generateRequest = async () => {
         try {
             // Make an API call to generate the request
@@ -83,7 +88,8 @@ export default function BookSlot() {
             console.log(error);
             alert("An error occurred while generating the request.");
         }
-        socket.emit('requestUpdated');
+        
+        socket.emit('requestUpdated', );
     };
 
     return (
